@@ -8,35 +8,29 @@ from std_msgs.msg import Float64MultiArray
 # for demonstration
 import random
 
-class MinimalSubscriber(Node):
+class ezloophwPyPubSub(Node):
 
     def __init__(self):
-        super().__init__('minimal_subscriber')
+        super().__init__('ezloophwpy_pubsub')
         subtopic = 'control_values'
+        pubtopic = 'bending_angles'
         self.subscription = self.create_subscription(
             Float64MultiArray,
             subtopic,
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
-        print('Created subscription to ', subtopic)
-
-    def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
-        print('I heard: ' + str(msg.data))
-
-# publisher and subscriber in same module for ease
-
-class MinimalPublisher(Node):
-
-    def __init__(self):
-        super().__init__('minimal_publisher')
-        pubtopic = 'bending_angles'
         self.publisher_ = self.create_publisher(Float64MultiArray, pubtopic, 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
+        print('Created subscription to ', subtopic)
+        print('Created publisher for topc ', pubtopic)
 
+    def listener_callback(self, msg):
+        self.get_logger().info('I heard: "%s"' % msg.data)
+        print('I heard: ' + str(msg.data))
+    
     def timer_callback(self):
         msg = Float64MultiArray()
         # msg.data = 'Hello World: %d' % self.i
@@ -45,35 +39,39 @@ class MinimalPublisher(Node):
         self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i += 1
 
+# publisher and subscriber in same module for ease
 
-# def main(args=None):
-#     rclpy.init(args=args)
+# class MinimalPublisher(Node):
 
-#     minimal_publisher = MinimalPublisher()
+    # def __init__(self):
+        # super().__init__('minimal_publisher')
+        # pubtopic = 'bending_angles'
+        # self.publisher_ = self.create_publisher(Float64MultiArray, pubtopic, 10)
+        # timer_period = 0.5  # seconds
+        # self.timer = self.create_timer(timer_period, self.timer_callback)
+        # self.i = 0
 
-#     rclpy.spin(minimal_publisher)
 
-#     # Destroy the node explicitly
-#     # (optional - otherwise it will be done automatically
-#     # when the garbage collector destroys the node object)
-#     minimal_publisher.destroy_node()
-#     rclpy.shutdown()
 
 def main(args=None):
     print('Python publisher/subscriber ROS2 minimal demo.')
     rclpy.init(args=args)
 
-    minimal_subscriber = MinimalSubscriber()
-    minimal_publisher = MinimalPublisher()
+    # minimal_subscriber = MinimalSubscriber()
+    # minimal_publisher = MinimalPublisher()
+    ezloophw_ros2_node = ezloophwPyPubSub()
 
-    rclpy.spin(minimal_subscriber) # ends when matlab ends
-    rclpy.spin(minimal_publisher) # ends when we end in python
+    # rclpy.spin(minimal_subscriber) # ends when matlab ends
+    # rclpy.spin(minimal_publisher) # ends when we end in python
+
+    rclpy.spin(ezloophw_ros2_node)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    minimal_subscriber.destroy_node()
-    minimal_publisher.destroy_node()
+    # minimal_subscriber.destroy_node()
+    # minimal_publisher.destroy_node()
+    ezloophw_ros2_node.destroy_node()
 
     rclpy.shutdown()
 
