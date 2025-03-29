@@ -36,17 +36,17 @@ pause(pubWait); %wait for some time to register publisher on the network
 subStarted = 0;
 substartwait = 5;
 
-disp('Attempting to start the subscriber...')
-while ~subStarted
-    try
-        bendingSub = ros2subscriber(matlabSubNode, '/bending_angles', @ezloophwROS2BendingAngleCallback);
-        subStarted = 1;
-    catch
-        disp("ERROR! You need to start the bending_angles publisher in python.");
-        disp("Waiting another " + string(substartwait) + " seconds, trying again...");
-        pause(substartwait);
-    end
-end
+% disp('Attempting to start the subscriber...')
+% while ~subStarted
+%     try
+%         bendingSub = ros2subscriber(matlabSubNode, '/bending_angles', @ezloophwROS2BendingAngleCallback);
+%         subStarted = 1;
+%     catch
+%         disp("ERROR! You need to start the bending_angles publisher in python.");
+%         disp("Waiting another " + string(substartwait) + " seconds, trying again...");
+%         pause(substartwait);
+%     end
+% end
 
 % --- Rates ---
 pubRate = 1;    % 1 Hz publish
