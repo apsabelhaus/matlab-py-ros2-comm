@@ -20,8 +20,8 @@ function ezloophwROS2BendingAngleCallback(message)
     % orient = [message.angular.x message.angular.y message.angular.z];
 
     if ~isempty(message.data)
-        bendingVec = bendingMsg.Data(:)';  % Row vector
-        disp('Received ', string(bendingVec));
+        bendingVec = message.data(:)';  % Row vector
+        disp("Received " + string(bendingVec));
     end
 
 end

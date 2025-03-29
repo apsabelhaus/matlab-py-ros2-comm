@@ -1,21 +1,17 @@
 #!/usr/bin/env python
 
-
 import rclpy
 from rclpy.node import Node
 
-# from std_msgs.msg import String
 from std_msgs.msg import Float64MultiArray
+
+# for demonstration
+import random
 
 class MinimalSubscriber(Node):
 
     def __init__(self):
         super().__init__('minimal_subscriber')
-        # self.subscription = self.create_subscription(
-        #     String,
-        #     'topic',
-        #     self.listener_callback,
-        #     10)
         subtopic = 'control_values'
         self.subscription = self.create_subscription(
             Float64MultiArray,
@@ -29,21 +25,57 @@ class MinimalSubscriber(Node):
         self.get_logger().info('I heard: "%s"' % msg.data)
         print('I heard: ' + str(msg.data))
 
+# publisher and subscriber in same module for ease
+
+class MinimalPublisher(Node):
+
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        pubtopic = 'bending_angles'
+        self.publisher_ = self.create_publisher(Float64MultiArray, pubtopic, 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = Float64MultiArray()
+        # msg.data = 'Hello World: %d' % self.i
+        msg.data = [random.random(), random.random()]  # 2x1 random vector
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
+
+# def main(args=None):
+#     rclpy.init(args=args)
+
+#     minimal_publisher = MinimalPublisher()
+
+#     rclpy.spin(minimal_publisher)
+
+#     # Destroy the node explicitly
+#     # (optional - otherwise it will be done automatically
+#     # when the garbage collector destroys the node object)
+#     minimal_publisher.destroy_node()
+#     rclpy.shutdown()
 
 def main(args=None):
-    print('Python subscriber ROS2 minimal demo.')
+    print('Python publisher/subscriber ROS2 minimal demo.')
     rclpy.init(args=args)
 
     minimal_subscriber = MinimalSubscriber()
+    minimal_publisher = MinimalPublisher()
 
-    rclpy.spin(minimal_subscriber)
+    rclpy.spin(minimal_subscriber) # ends when matlab ends
+    rclpy.spin(minimal_publisher) # ends when we end in python
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
     minimal_subscriber.destroy_node()
-    rclpy.shutdown()
+    minimal_publisher.destroy_node()
 
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
