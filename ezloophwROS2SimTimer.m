@@ -11,17 +11,13 @@ function ezloophwROS2SimTimer(~, ~, handles)
     
     % Update the pose message values
     if isvalid(handles.controlPub)
-        handles.controlPubmsg.data = rand(2,1);
-        % disp('callback pub')
-        % disp(handles.controlPubmsg.Data);
-        % handles.controlPubmsg.linear.x = handles.controlPubmsg.linear.x + (rand(1)-0.5)./10;
-        % handles.controlPubmsg.linear.y = handles.controlPubmsg.linear.y + (rand(1)-0.5)./10;
-        % handles.controlPubmsg.linear.z = handles.controlPubmsg.linear.z + (rand(1)-0.5)./10;
-        % handles.controlPubmsg.angular.x = handles.controlPubmsg.angular.x + (rand(1)-0.5)./10;
-        % handles.controlPubmsg.angular.y = handles.controlPubmsg.angular.y + (rand(1)-0.5)./10;
-        % handles.controlPubmsg.angular.z = handles.controlPubmsg.angular.z + (rand(1)-0.5)./10;
-        % 
-        % Publish the scan and pose messages
+        % handles.controlPubmsg.data = rand(2,1);
+        % Negative and positive numbers between [-2000, 2000]
+        %handles.controlPubmsg.data = 2000*rand(2,1) - [2000; 2000];
+        % for the pneumatics hardware, really is +/- 200 or so.
+        handles.controlPubmsg.data = 200*rand(2,1) - [100; 100];
+        disp(handles.controlPubmsg.data)
+        % Publish the control input message
         send(handles.controlPub, handles.controlPubmsg);
     end
 end

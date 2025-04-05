@@ -1,11 +1,13 @@
-% Modified 2025-03-26 for ROS2. -Drew
+% ros2_matlab_openloop.m
+% (C) Soft Robotics Control Lab 2025
+% Open loop sequence of control inputs sent over ros.
 
 %%% Setup just to make sure we start at the same state each time.
 clear all
 close all
 clc;
 
-disp('ROS2 Matlab demo for communication with Python.');
+disp('ROS2 Matlab Open Loop Control for ezloophw.');
 disp('(C) Soft Robotics Control Lab at Boston University, 2025');
 disp('creating the nodes / starting ros2...');
 
@@ -53,7 +55,8 @@ end
 
 % --- Rates ---
 % pubRate = 1;    % 1 Hz publish
-pubRate = 5.0;    % this is period not frequency
+% pubRate = 5.0;    % this is period not frequency
+pubRate = 0.05;     % this is half one control period, dt=0.1 sec
 
 % --- Initialize timing ---
 
@@ -62,7 +65,22 @@ pubRate = 5.0;    % this is period not frequency
 % The timer will call exampleHelperROSSimTimer at a rate of pubRate.
 timerHandles.controlPub = controlPub;
 timerHandles.controlPubmsg = controlMsg;
-simTimer = ezloophwROS2Timer(pubRate, {@ezloophwROS2SimTimer,timerHandles});
+timerHandles.node = matlabPubNode;
+
+% parameters for the open loop controller.
+ctrl_param.amp1 = 100;
+ctrl_param.amp2 = 100;
+ctrl_param.per1 = 30;
+ctrl_param.per2 = 40;
+ctrl_param.shift1 = 0;
+ctrl_param.shift2 = 0;
+ctrlr = @u_openloopsine;
+timerHandles.ctrl_param = ctrl_param;
+timerHandles.ctrlr = ctrlr;
+
+% timerHandles.timeatstart = ros2time(matlabPubNode, 'now');
+timerHandles.timeatstart = double(ros2time(matlabPubNode,'now').sec) + double(ros2time(matlabPubNode,'now').nanosec) * 1e-9;
+simTimer = ezloophwROS2Timer(pubRate, {@ezloophwROS2OpenLoopTimer,timerHandles});
 
 %%% Main loop. Just waits until user clicks q in window,
 
