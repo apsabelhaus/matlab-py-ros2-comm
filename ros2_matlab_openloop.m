@@ -68,8 +68,8 @@ timerHandles.controlPubmsg = controlMsg;
 timerHandles.node = matlabPubNode;
 
 % parameters for the open loop controller.
-ctrl_param.amp1 = 50;
-ctrl_param.amp2 = 50;
+ctrl_param.amp1 = 70;
+ctrl_param.amp2 = 70;
 ctrl_param.per1 = 60;
 ctrl_param.per2 = 90;
 ctrl_param.shift1 = 0;
